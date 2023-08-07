@@ -5,67 +5,131 @@ output: html_document
 
 ### Introduction
 
-An introduction of the problem domain and a description of the variable(s) you are choosing to analyze (and why!)
+In the intricate tapestry of America's sociopolitical landscape, one of the most glaring manifestations of 
+systemic racism is evident in its incarceration system. From overt policies to implicit biases, 
+there has been a long-standing pattern of racial disparity in the country's jails and prisons.
+Taking a deep dive into Washington's incarceration data, this report seeks to shed light on these disparities 
+by analyzing the incarceration rates of Black and White populations in jails.
+Two variables have been chosen for this analysis: black_jail_pop_rate representing the incarceration rate 
+for Black individuals in jails, and white_jail_pop_rate for White individuals. 
+These variables have been chosen due to the extensive discussions and documentation surrounding the racial 
+disparities between Black and White populations in the U.S. incarceration system. By analyzing these metrics, 
+I hope to draw attention to patterns that might otherwise go unnoticed, fostering informed discussions on this pressing issue.
 
 ### Summary Information
 
-Write a summary paragraph of findings that includes the 5 values calculated from your summary information R script
-
-These will likely be calculated using your DPLYR skills, answering questions such as: 
-
-- What is the average value of my variable across all the counties (in the current year)?
-- Where is my variable the highest / lowest?
-- How much has my variable change over the last N years?
-
-Feel free to calculate and report values that you find relevant. Again, remember that the purpose is to think about how these measure of incarceration vary by race.
+In the most recent year of our dataset (2018), Washington's incarceration data reveals a concerning disparity between Black and White populations.
+On average, Black individuals face an incarceration rate in jails of 1052.113 per 100,000 people, 
+as compared to White individuals who have a rate of 326.4833 per 100,000 people. 
+When digging deeper into the counties, Lincoln County has the highest Black jail population rate, 
+standing at 4918.03 per 100,000 people, while Whitman County has the lowest with 87.03 per 100,000 individuals.
+Significantly, from 1990 to the latest year, there has been a change of -707.576 in the 
+average jail population rate for Black individuals.
 
 ### The Dataset
 
-Who collected the data?  
-How was the data collected or generated?  
-Why was the data collected?  
-How many observations (rows) are in your data?  
-How many features (columns) are in the data?  
-What, if any, ethical questions or questions of power do you need to consider when working with this data?  
-What are possible limitations or problems with this data?   (at least 200 words)
+#### Who collected the data?
+  The data was collected by the Vera Institute. More specifically, it was drawn from
+  the National Corrections Reporting Program (NCRP). In addition, data from the Annual Survey of Jails (ASJ),
+  Census of Jails (COJ), and the Death in Custody Reporting Program (DCRP) were also used.
 
+#### How was the data collected or generated?
+  The data was collected by the prison/jail facilities that then report to these programs. The Vera institute then
+  pulls it from there. 
 
-### Trends Over Time Chart
+##### Why was the data collected? 
+  The data was collected in order to examine incarceration trends.
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
+#### How many observations (rows) are in your data?
+  1131 rows.
+ 
+#### How many features (columns) are in the data?
+  23 columns.
 
-The first chart that you will create and include will show the trend over time of your variable/topic. Think carefully about what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
+#### What, if any, ethical questions or questions of power do you need to consider when working with this data?
+  The ethical issues I can think of when working with this data are:
+  - Representation: Presenting jail rates, especially by racial or ethnic groups, can reinforce stereotypes. Interpret with care.
+  - Data Collection: Was the collection consensual and ethical, respecting inmates' privacy rights?
+  - Data Interpretation: Behind each number is a unique human story. Avoid dehumanizing data presentation.
+  - Oversimplification: The data might not capture the whole story. Recognize its simplicity.
+  - Use and Misuse: Ensure data presentation doesn't perpetuate discriminatory practices or policies.
 
-- Show more than one, but fewer than ~10 trends
-  - This may mean showing the same measure for different locations or different racial groups. Think carefully about a meaningful comparison of locations (e.g., the top 10 counties in a state, top 10 states, etc.)
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- You need a legend for your different line colors and a clear legend title
+#### What are possible limitations or problems with this data?   (at least 200 words)
+There are many possible limitations or problems with this data. One that comes to mind is
+that the data may exclude some jails or inmates, leading to incomplete representation. Human or systemic errors during data collection 
+can affect accuracy and reliability. Additionally, since the data only reaches a specific year, it might not reflect current situations. 
+Another issue is that we lack context: reasons for incarceration, sentence lengths, and confinement conditions remain unknown. 
+The data's granularity might be insufficient, omitting factors like age or socio-economic status, which can provide deeper understanding.
+External influences, such as legal changes or policing practices, can alter incarceration rates. Without considering these, interpretations can be biased. 
+As the data pertains only to Washington, applying findings universally can be misleading. Inconsistent reporting across jails, like varying definitions of inmate counts,
+can lead to discrepancies. In essence, while the dataset offers insights into incarceration,
+it's imperative to understand its constraints and the broader implications that come with interpretation.
 
-When we say "clear" or "human readable" titles and labels, that means that you should not just display the variable name.
+## Visualization
 
-Here's an example of how to run an R script inside an RMarkdown file:
+### Jail Population Rate Over Time
 
-``````{r, echo = FALSE, code = readLines("chart1_example.R")}
+```{r chart1, echo=FALSE, warning=FALSE, message=FALSE}
+# Libraries needed
+library(tidyverse)
+library(ggplot2)
+library(viridis)
+
+# Data import
+url <- "https://raw.githubusercontent.com/melaniewalsh/Neat-Datasets/main/us-prison-jail-rates-1990-WA.csv"
+prison_dataset <- read.csv(url)
+
+# Generate the line chart for jail population rate over time
+ggplot(prison_dataset, aes(x = year)) +
+  geom_line(aes(y = black_jail_pop_rate, color = "Black Jail Pop Rate"), na.rm = TRUE) +
+  geom_line(aes(y = white_jail_pop_rate, color = "White Jail Pop Rate"), na.rm = TRUE) +
+  labs(
+    title = "Jail Population Rate Over Time for Black and White Inmates in Washington",
+    x = "Year",
+    y = "Jail Population Rate per 100,000",
+    color = "Rate Type"
+  ) +
+  theme_minimal()
 ```
 
-### Variable Comparison Chart
+### Male vs Female Jail Population Rate
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
+```{r chart2, echo=FALSE, warning=FALSE, message=FALSE}
+# Generate scatter plot for male vs female jail population rate
+ggplot(prison_dataset, aes(x = male_jail_pop_rate, y = female_jail_pop_rate)) +
+  geom_point(aes(color = year), alpha = 0.6) +
+  labs(
+    title = "Comparison between Male and Female Jail Population Rate",
+    x = "Male Jail Population Rate per 100,000",
+    y = "Female Jail Population Rate per 100,000",
+    color = "Year"
+  ) +
+  theme_minimal()
+```
 
-The second chart that you will create and include will show how two different (continuous) variables are related to one another. Again, think carefully about what such a comparison means and what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
+### Jail Population by County in Washington for 2018
 
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- If you choose to add a color encoding (not required), you need a legend for your different color and a clear legend title
+```{r map, echo=FALSE, warning=FALSE, message=FALSE}
+# Preprocess data for the map
+us_county_map <- map_data("county")
+washington_2018 <- subset(prison_dataset, year == 2018 & state == "WA")
+washington_2018$cleaned_county_name <- tolower(gsub(" County", "", washington_2018$county_name))
+washington_map <- subset(us_county_map, region == "washington")
+combined_wa_data <- left_join(washington_map, washington_2018, by = c("subregion" = "cleaned_county_name"))
 
-### Map
-
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
-
-The last chart that you will create and include will show how a variable is distributed geographically. Again, think carefully about what such a comparison means and what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
-
-- Your map needs a title
-- Your color scale needs a legend with a clear label
-- Use a map based coordinate system to set the aspect ratio of your map
-
+# Generate map
+ggplot(data = combined_wa_data, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = total_jail_pop_rate), color = "white") +
+  coord_fixed(1.3) + 
+  scale_fill_viridis_c(name = "Total Jail\nPop Rate", 
+                       na.value = "grey50",
+                       guide = guide_colorbar(direction = "horizontal")) +
+  labs(title = "Total Jail Population Rate by County in Washington (2018)",
+       subtitle = "Grey areas represent missing data or non-matching county names") +
+  theme_minimal() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, size = 10))
+```
